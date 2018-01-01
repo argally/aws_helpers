@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+from __future__ import absolute_import
+from __future__ import print_function
+from aws.connection import Connection
+from aws.ec2elasticip import EC2Eip
+from tabulate import tabulate
+import click
+
+
+@click.command()
+@click.option(
+    '--region', '-r',
+    help='Please select AWS region',
+)
+@click.option(
+    '--table-format', '-t',
+    help='Please select Table format options incl jira, grid, simple',
+)
+def main(region, table_format):
+    """
+    Small AWS helper script to dump out useful data from the API
+
+    Select the region e.g ca-central-1 or us-west-2 etc as argument
+
+    You should have already set your AWS_PROFILE if you have multiple profiles
+    """
+    myconn = Connection(region, 'ec2')
+    client_conn = myconn.client_connection()
+    eip_table = EC2Eip()
+    e2_table = eip_table.ec2_eip_count_client(client_conn)
+    print(tabulate(e2_table, headers=e2_table.columns, tablefmt=table_format))
+
+
+if __name__ == "__main__":
+    main()
