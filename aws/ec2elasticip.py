@@ -67,7 +67,8 @@ class EC2Eip(object):
                 private_ip = eip_dict['PrivateIpAddress']
             except KeyError:
                 private_ip = ""
-            eip_list_dict.extend([(eip_tagged_name, eip_tagged_az, eip_tagged_stack, eip_dict['PublicIp'], eip_dict['AllocationId'], eip_assoc_id, eip_instance_id, eip_eni_id, private_ip)])
+            eip_list_dict.extend([(eip_tagged_name, eip_tagged_az, eip_tagged_stack, 
+                eip_dict['PublicIp'], eip_dict['AllocationId'], eip_assoc_id, eip_instance_id, eip_eni_id, private_ip)])
         eip_count = self.ec2_eip_count(eip_list_dict)
         print('Number of Eip found %s ' % eip_count)
         df = pd.DataFrame(eip_list_dict, columns=["Name", "AZ", "Stack", "EIP", "AllocId", "AssocId", "InstanceId", "NetworkInterfaceId", "PrivateIpAddress"])

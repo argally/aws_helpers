@@ -60,7 +60,7 @@ class Connection(object):
         to ensure it corresponds to value equal to ec2
         """
         try:
-            if service.lower() != "ec2":
-                raise ValueError('For EC2 instances ensure attribue service equals ec2')
+            if service.lower() not in ['ec2', 'autoscaling', 'logs']:
+                raise ValueError('Ensure you enter valid AWS services i.e ec2, logs, s3')
         except ValueError as e:
             exit(str(e))

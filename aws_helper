@@ -4,6 +4,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from aws.connection import Connection
 from aws.ec2elasticip import EC2Eip
+from aws.cloudwatch import CloudWatchLogs
 from tabulate import tabulate
 import click
 
@@ -11,13 +12,21 @@ import click
 @click.command()
 @click.option(
     '--region', '-r',
+    required=True,
     help='Please select AWS region',
 )
 @click.option(
-    '--table-format', '-t',
+    '--type', '-t',
+    type=click.Choice(['eip', 'logs'])
+)
+@click.option(
+    '--table-format', '-f',
     help='Please select Table format options incl jira, grid, simple',
 )
-def main(region, table_format):
+
+
+
+def main(region, type, table_format):
     """
     Small AWS helper script to dump out useful data from the API
 
@@ -25,12 +34,17 @@ def main(region, table_format):
 
     You should have already set your AWS_PROFILE if you have multiple profiles
     """
-    myconn = Connection(region, 'ec2')
-    client_conn = myconn.client_connection()
-    eip_table = EC2Eip()
-    e2_table = eip_table.ec2_eip_count_client(client_conn)
-    print(tabulate(e2_table, headers=e2_table.columns, tablefmt=table_format))
-
+    if type.lower() in ['eip']:
+        myconn = Connection(region, 'ec2')
+        client_conn = myconn.client_connection()
+        eip_table = EC2Eip()
+        e2_table = eip_table.ec2_eip_count_client(client_conn)
+        print(tabulate(e2_table, headers=e2_table.columns, tablefmt=table_format))
+    elif type.lower() in ['logs']:
+        myconn = Connection(region, 'logs')
+        client_conn = myconn.client_connection()
+        log_group = CloudWatchLogs('mtl-stg-rsyslog-f5')
+        log_name = log_group.log_group_search(client_conn,)
 
 if __name__ == "__main__":
     main()
